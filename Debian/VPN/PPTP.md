@@ -1,8 +1,8 @@
 ---
 title: PPTP
 description: Настройка PPTP сервера на Debian
-published: false
-date: 2022-02-02T16:31:13.919Z
+published: true
+date: 2022-02-02T18:57:02.711Z
 tags: debian, pptp, pptpd, vpn
 editor: markdown
 dateCreated: 2022-02-02T16:16:19.886Z
