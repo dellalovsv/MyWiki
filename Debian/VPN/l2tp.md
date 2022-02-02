@@ -1,8 +1,8 @@
 ---
-title: Настройка L2TP+IPSec сервера на Debian
+title: L2TP+IPSec
 description: Настройка L2TP+IPSec сервера на Debian
 published: false
-date: 2022-02-02T19:06:20.112Z
+date: 2022-02-02T19:07:00.080Z
 tags: debian, ipsec, l2tp, vpn
 editor: markdown
 dateCreated: 2022-02-02T18:56:51.160Z
