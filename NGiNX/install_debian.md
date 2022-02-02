@@ -2,7 +2,7 @@
 title: Nginx + Php + MariaDB + PhpMyAdmin + Perl
 description: Установка и настройка NGiNX + PHP + MariaDB + PhpMyAdmin + Perl на Debian
 published: false
-date: 2022-02-02T15:29:53.598Z
+date: 2022-02-02T15:47:35.337Z
 tags: debian, linux, mariadb, mysql, nginx, perl, php, phpmyadmin
 editor: markdown
 dateCreated: 2022-02-02T14:49:07.617Z
@@ -92,4 +92,71 @@ location ~ \.php$ {
 Перезагружаем **php-fpm**:
 ```bash
 /etc/init.d/php{VERSION}-fpm restart
+```
+### MariaDB, PhpMyAdmin
+#### Установка
+```bash
+apt install mariadb-server mariadb-client phpmyadmin -y
+```
+> В процессе установке нужно будет настроить БД для phpmyadmin (указать пароль). При запросе для какого веб-сервера нужно настроить хост, то нужно отказаться.
+{.is-info}
+
+#### Настройка MariaDB
+##### Debian 9
+```bash
+mysqladmin -u root password 'enter password here'
+service mariadb restart
+mysql -u root -p mysql (Ввод пароля не требуется)
+update user set plugin="" where user='root';
+flush privileges;
+exit
+```
+##### Debian 11
+Нужно запусть **mysql_secure_installation**:
+```bash
+mysql_secure_installation
+```
+В процессе выполнения скрипта нужно будет ответить на вопросы.
+#### Настройка PhpMyAdmin
+Подключаем **PhpMyAdmin** к **NGiNX** для доступа к БД через веб.
+Создаем файл **pma** и заполняем его:
+```bash
+nano /etc/nginx/sites-available/pma
+```
+```nginx
+server {
+  listen 80;
+  server_name pma.yourhost.com;
+  
+  access_log off;
+  error_log /var/log/nginx/pma.error.log;
+  
+  root /usr/share/phpmyadmin;
+  index index.php;
+  
+  location / {
+  	try_files $uri $uri/ /index.php?$args;
+  }
+  
+  include php-cgi.conf;
+}
+```
+Сохраняем, закрываем (<kbd>F2</kbd>, <kbd>CTRL+X</kbd>).
+
+Активируем хост:
+```bash
+ln -s /etc/nginx/sites-available/pma /etc/nginx/sites-enabled/
+```
+Проверяем правильность конфигураций **nginx**:
+```bash
+nginx -t
+```
+Если все хорошо, то ответ будет следующим:
+```bash
+nginx: the configuration file /etc/nginx/nginx.conf syntax is ok
+nginx: configuration file /etc/nginx/nginx.conf test is successful
+```
+Теперь можем перечитать конфиги **nginx**:
+```bash
+nginx -s reload
 ```
