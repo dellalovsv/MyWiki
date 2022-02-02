@@ -2,8 +2,8 @@
 title: Accel-PPP Установка Debian
 description: Установка и настройка Accel-PPP + Abills для IPoE на Debian
 published: true
-date: 2022-02-02T12:53:29.269Z
-tags: debian, linux, accel-ppp, accel-ipoe, router, nas, abills
+date: 2022-02-02T14:31:43.716Z
+tags: abills, accel-ipoe, accel-ppp, debian, linux, nas, router
 editor: markdown
 dateCreated: 2022-02-02T11:55:30.601Z
 ---
@@ -20,7 +20,7 @@ dateCreated: 2022-02-02T11:55:30.601Z
 
 ## Установка
 ### Подготовка системы
-```
+```bash
 apt update
 cd /usr/src
 apt install make cmake libcrypto++-dev libssl-dev libpcre3 libpcre3-dev git lua5.1 liblua5.1-0-dev vlan -y
@@ -28,12 +28,12 @@ apt install linux-headers-`uname -r` -y
 reboot
 ```
 ### Скачиваем и распаковываем архив
-```
+```bash
 wget -O /usr/src/accel-ppp-1-12-0.tar.bz2 https://files.delovoyadmin.net/accel-ppp/1.12.0/accel-ppp-1.12.0.tar.bz2
 tar -xjf accel-ppp-1.12.0.tar.bz2
 ```
 ### Сборка
-```
+```bash
 mkdir accel-ppp-build
 cd accel-ppp-build
 cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DKDIR=/usr/src/linux-headers-`uname -r` -DRADIUS=TRUE -DSHAPER=TRUE -DLOG_PGSQL=FALSE -DLUA=TRUE -DBUILD_IPOE_DRIVER=TRUE ../accel-ppp-1.12.0
@@ -41,17 +41,17 @@ make
 make install
 ```
 После сборки и установки нужно подключить драйвер **ipoe.ko**:
-```
+```shell
 insmod /usr/src/accel-ppp-build/drivers/ipoe/driver/ipoe.ko
 ```
 
 ## Настройка
 Создаем скрипт автозапуска:
-```
+```bash
 nano /etc/init.d/accel-ppp
 ```
 Заполняем следующим содержимым:
-```
+```bash
 #!/bin/sh
 # /etc/init.d/accel-ppp: set up the accel-ppp server
 ### BEGIN INIT INFO
@@ -119,27 +119,27 @@ esac
 exit 0
 ```
 Делаем файл исполняемым/даем права на запуск:
-```
+```bash
 chmod +x /etc/init.d/accel-ppp
 ```
 ### LUA
 Создаем файл **lua**.
-```
+```bash
 nano /etc/accel-ppp.lua
 ```
 Заполняем следующим содержимым:
-```
+```lua
 function username(pkt)
 return pkt:hdr('chaddr')
 end
 ```
 ### Ротация логов
 Создаем файл **accel-ppp**
-```
+```bash
 nano  /etc/logrotate.d/accel-ppp
 ```
 Заполняем следующим содержимым:
-```
+```bash
 /var/log/accel-ppp/*.log {
       rotate 7
       daily
@@ -154,11 +154,11 @@ nano  /etc/logrotate.d/accel-ppp
 ```
 ### Freeradius
 Открываем файл **dictionary** на редактирование
-```
+```bash
 nano /usr/local/share/accel-ppp/radius/dictionary
 ```
 Дописываем в конце файла:
-```
+```bash
 ATTRIBUTE DHCP-Router-IP-Address 241 ipaddr
 ATTRIBUTE DHCP-Mask              242 integer
 ATTRIBUTE L4-Redirect      243 integer
@@ -182,7 +182,7 @@ ATTRIBUTE Acct-Input-Gigawords    52      integer
 ATTRIBUTE Acct-Output-Gigawords   53      integer
 ```
 Так-же нужно добавить следующие в словарь **Freeradius**
-```
+```bash
 # Freeradius v2.x
 nano /etc/freeradius/dictionary
 
@@ -190,7 +190,7 @@ nano /etc/freeradius/dictionary
 nano /etc/freeradius/3.x/dictionary
 ```
 Дописываем в конце файла:
-```
+```bash
 ATTRIBUTE DHCP-Router-IP-Address 241 ipaddr
 ATTRIBUTE DHCP-Mask              242 integer
 ATTRIBUTE L4-Redirect      243 integer
@@ -215,14 +215,14 @@ ATTRIBUTE Acct-Output-Gigawords   53      integer
 ```
 ### Конфигурация Accel-PPP
 Делаем копию оригинала (если он существует), очищаем оригинал:
-```
+```bash
 cp /etc/accel-ppp.conf{,.bak}
 
 # Если файл не существует, то создаем новый
 nano /etc/accel-ppp.conf
 ```
 Заполняем следующим:
-```
+```bash
 [modules]
 log_file
 ipoe
@@ -485,10 +485,10 @@ route-via-gw=1
 ```
 ### VLAN's
 Скрипт для поднятия vlan'ов при запуске сервера
-```
+```bash
 nano /path/to/script/vlan.sh
 ```
-```
+```bash
 #!/bin/bash
 
 IFACE="eth1"
@@ -513,15 +513,15 @@ for i in $VLANS; do
 done
 ```
 Сохраняем (<kbd>f2</kbd>, <kbd>ctrl+x</kbd>) и даем права на запуск:
-```
+```bash
 chmod +x /path/to/script/vlan.sh
 ```
 ### Автозагрузка через cronta + скрипт
 Создаем файл скрипта автозагрузки:
-```
+```bash
 nano /path/to/script/start_server.sh
 ```
-```
+```bash
 #!/bin/sh
 
 sysctl -w net.netfilter.nf_conntrack_max=1048576
@@ -536,21 +536,21 @@ iptables-restore < /etc/iptables/rules.v4
 /etc/init.d/accel-ppp start
 ```
 В конце файла **crontab** дописываем:
-```
+```bash
 @reboot  /bin/sleep 5 && /path/to/script/start_server.sh
 ```
 Применяем настройки **crontab**:
-```
+```bash
 crontab /etc/crontab
 ```
 ### IpTables
 Добавляем заглушки:
-```
+```bash
 iptables -A PREROUTING -s 10.0.0.0/22 ! -d 172.17.253.1/32 -p tcp -m tcp --dport 80 -j DNAT --to-destination 172.17.253.1:8080
 iptables -A PREROUTING -s 10.24.0.0/22 ! -d 172.17.253.1/32 -p tcp -m tcp --dport 80 -j DNAT --to-destination 172.17.253.1:8002
 ```
 Добавляем NAT:
-```
+```bash
 # Клиентская подсеть
 iptables -A POSTROUTING -s 172.16.50.0/24 -j SNAT --to-source EXT_IP
 # Подсеть с негативным депозитом
