@@ -2,7 +2,7 @@
 title: Установка/Перенос 0.59
 description: Установка и настройка Abills 0.59 под NGiNX на Debian
 published: false
-date: 2022-02-02T17:30:11.873Z
+date: 2022-02-02T17:35:22.931Z
 tags: abills, abills 0.59, debian, nginx
 editor: markdown
 dateCreated: 2022-02-02T16:35:41.603Z
@@ -70,6 +70,23 @@ crontab /etc/crontab
 ## [Настройка MySQL (MariaDB)](https://wiki.delovoyadmin.net/ru/NGiNX/install_debian#%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0-mariadb-phpmyadmin)
 Статья по настройке **MySQL** по ссылке выше.
 ## Настройка Freeradius
+### Установка
+```bash
+apt install freeradius -y
+```
+### Настройка
+Скачиваем последнюю версию [Abills](https://netix.dl.sourceforge.net/project/abills/abills/0.92/abills-0.92.05.tgz)
+- Распаковываем;
+- Заходим в распакованую директорию **abills**;
+
+Далее выполняем следующии действия:
+```bash
+rm /etc/freeradius/3.0/sites-enabled/*
+cp misc/freeradius/v3/mods-enabled/perl /etc/freeradius/3.0/mods-enabled/perl
+cp misc/freeradius/v3/mods-enabled/sql /etc/freeradius/3.0/mods-enabled/sql
+cp misc/freeradius/v3/sites-enabled/abills_default /etc/freeradius/3.0/sites-enabled/abills_default
+cp misc/freeradius/v3/users /etc/freeradius/3.0/users
+```
 
 ## Настройка NGiNX
 
