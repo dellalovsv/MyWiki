@@ -2,7 +2,7 @@
 title: Установка/Перенос 0.59
 description: Установка и настройка Abills 0.59 под NGiNX на Debian
 published: false
-date: 2022-02-02T17:55:00.280Z
+date: 2022-02-02T17:56:35.925Z
 tags: abills, abills 0.59, debian, nginx
 editor: markdown
 dateCreated: 2022-02-02T16:35:41.603Z
@@ -67,7 +67,7 @@ $conf{ACCEL_IPOE_GUEST_POOL}=№ наса в биллинге,№ гостево
 ### Cron
 Открываем файл **crontab**:
 ```bash
-nano /etc/cronta
+nano /etc/crontab
 ```
 Дописываем:
 ```bash
