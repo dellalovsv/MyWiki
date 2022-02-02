@@ -2,7 +2,7 @@
 title: PPTP
 description: Настройка PPTP сервера на Debian
 published: false
-date: 2022-02-02T16:30:36.077Z
+date: 2022-02-02T16:31:13.919Z
 tags: debian, pptp, pptpd, vpn
 editor: markdown
 dateCreated: 2022-02-02T16:16:19.886Z
@@ -20,14 +20,14 @@ apt install pptpd -y
 nano /etc/network/interfaces
 ```
 ```bash
-auto eth0:1
-iface eth0:1 inet static
+auto {IF_NAME}:1
+iface {IF_NAME}:1 inet static
   address 10.100.0.1/24
 ```
 Сохраняем, закрываем (<kbd>F2</kbd>, <kbd>CTRL+X</kbd>).
 Теперь можем поднять данный интерфей:
 ```bash
-ifup eth0:1
+ifup {IF_NAME}:1
 ```
 ### PPTPD
 Если файл **pptpd.conf** существует, то очищаем его предварительно сделав копию:
