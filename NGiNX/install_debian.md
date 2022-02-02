@@ -2,7 +2,7 @@
 title: Nginx + Php + MariaDB + PhpMyAdmin + Perl
 description: Установка и настройка NGiNX + PHP + MariaDB + PhpMyAdmin + Perl на Debian
 published: false
-date: 2022-02-02T16:02:20.047Z
+date: 2022-02-02T16:09:15.427Z
 tags: debian, linux, mariadb, mysql, nginx, perl, php, phpmyadmin
 editor: markdown
 dateCreated: 2022-02-02T14:49:07.617Z
@@ -330,4 +330,22 @@ chmod +x /etc/init.d/perl-fcgi
 ```bash
 systemctl enable perl-fcgi
 /etc/init.d/perl-fcgi start
+```
+Теперь нужно добавить **location** в хост файл или создать отдельный файл и подключать его дерективой **include**:
+```nginx
+location ~ \.cgi$ { #(В оригинале location ~ \.pl$ {)
+  try_files $uri =404;
+	gzip off;
+	fastcgi_pass  127.0.0.1:8999;
+	fastcgi_index index.cgi; #(В оригинале fastcgi_index index.pl;)
+	fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
+	include fastcgi_params;
+}
+```
+
+---
+
+Перезагружаем **NGiNX**:
+```bash
+/etc/init.d/nginx restart
 ```
