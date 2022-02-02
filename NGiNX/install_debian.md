@@ -2,15 +2,14 @@
 title: Nginx + Php + MariaDB + PhpMyAdmin + Perl
 description: Установка и настройка NGiNX + PHP + MariaDB + PhpMyAdmin + Perl на Debian
 published: false
-date: 2022-02-02T15:49:29.353Z
+date: 2022-02-02T15:50:46.572Z
 tags: debian, linux, mariadb, mysql, nginx, perl, php, phpmyadmin
 editor: markdown
 dateCreated: 2022-02-02T14:49:07.617Z
 ---
 
 # Установка и настройка NGiNX + PHP + MariaDB + PhpMyAdmin + Perl
-## Установка
-### NGiNX, PHP
+## Установка NGiNX, PHP
 ```bash
 apt install nginx php-{fpm,common,mysql,gd,cli,curl,mbstring,cgi} -y
 ```
@@ -93,8 +92,7 @@ location ~ \.php$ {
 ```bash
 /etc/init.d/php{VERSION}-fpm restart
 ```
-## MariaDB, PhpMyAdmin
-#### Установка
+## Установка MariaDB, PhpMyAdmin
 ```bash
 apt install mariadb-server mariadb-client phpmyadmin -y
 ```
