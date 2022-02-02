@@ -2,7 +2,7 @@
 title: Accel-PPP Установка Debian
 description: Установка и настройка Accel-PPP + Abills для IPoE на Debian
 published: true
-date: 2022-02-02T14:31:43.716Z
+date: 2022-02-02T14:34:52.789Z
 tags: abills, accel-ipoe, accel-ppp, debian, linux, nas, router
 editor: markdown
 dateCreated: 2022-02-02T11:55:30.601Z
