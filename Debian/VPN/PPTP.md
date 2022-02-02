@@ -2,7 +2,7 @@
 title: PPTP
 description: Настройка PPTP сервера на Debian
 published: false
-date: 2022-02-02T16:29:51.352Z
+date: 2022-02-02T16:30:36.077Z
 tags: debian, pptp, pptpd, vpn
 editor: markdown
 dateCreated: 2022-02-02T16:16:19.886Z
@@ -15,7 +15,7 @@ apt install pptpd -y
 ```
 ## Настройка
 ### Добавление интерфейса
-В файле **interface** дописываем следующее (Добавим еще один IP адрес на интерфейс)
+В файле **interfaces** дописываем следующее (Добавим еще один IP адрес на интерфейс)
 ```bash
 nano /etc/network/interfaces
 ```
