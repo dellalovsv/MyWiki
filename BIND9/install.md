@@ -1,8 +1,8 @@
 ---
 title: Установка
 description: Установка и настройка BIND9 на Debian
-published: false
-date: 2022-02-02T19:46:40.631Z
+published: true
+date: 2022-02-02T19:47:18.297Z
 tags: bind9, debian, dns, linux
 editor: markdown
 dateCreated: 2022-02-02T19:36:37.711Z
