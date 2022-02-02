@@ -2,7 +2,7 @@
 title: Accel-PPP Установка Debian
 description: Установка и настройка Accel-PPP + Abills для IPoE на Debian
 published: true
-date: 2022-02-02T14:37:15.029Z
+date: 2022-02-02T18:04:14.796Z
 tags: abills, accel-ipoe, accel-ppp, debian, linux, nas, router
 editor: markdown
 dateCreated: 2022-02-02T11:55:30.601Z
@@ -10,13 +10,12 @@ dateCreated: 2022-02-02T11:55:30.601Z
 
 # Установка и настройка Accel-PPP + Abills 0.59
 Исходный код скачать можно ниже по ссылкам:
-[1.11.2](https://files.delovoyadmin.net/accel-ppp/1.11.2/accel-ppp-1.11.2.tar.bz2)
-[1.12.0](https://files.delovoyadmin.net/accel-ppp/1.12.0/accel-ppp-1.12.0.tar.bz2)
+[Исходники на GitHub](https://github.com/accel-ppp/accel-ppp.git)
 
 Скрипты:
-[set_irq_affinity](https://files.delovoyadmin.net/nas-scripts/set_irq_affinity)
-[smp.sh](https://files.delovoyadmin.net/nas-scripts/smp.sh)
-[vlan.sh](https://files.delovoyadmin.net/nas-scripts/vlan.sh)
+set_irq_affinity
+smp.sh
+vlan.sh
 
 ## Установка
 ### Подготовка системы
@@ -29,14 +28,15 @@ reboot
 ```
 ### Скачиваем и распаковываем архив
 ```bash
-wget -O /usr/src/accel-ppp-1-12-0.tar.bz2 https://files.delovoyadmin.net/accel-ppp/1.12.0/accel-ppp-1.12.0.tar.bz2
-tar -xjf accel-ppp-1.12.0.tar.bz2
+cd /usr/src
+mkdir accel-ppp
+git clone https://github.com/accel-ppp/accel-ppp.git ./accel-ppp
 ```
 ### Сборка
 ```bash
 mkdir accel-ppp-build
 cd accel-ppp-build
-cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DKDIR=/usr/src/linux-headers-`uname -r` -DRADIUS=TRUE -DSHAPER=TRUE -DLOG_PGSQL=FALSE -DLUA=TRUE -DBUILD_IPOE_DRIVER=TRUE ../accel-ppp-1.12.0
+cmake -DCMAKE_INSTALL_PREFIX=/usr/local -DKDIR=/usr/src/linux-headers-`uname -r` -DRADIUS=TRUE -DSHAPER=TRUE -DLOG_PGSQL=FALSE -DLUA=TRUE -DBUILD_IPOE_DRIVER=TRUE ../accel-ppp
 make
 make install
 ```
