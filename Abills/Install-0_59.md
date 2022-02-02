@@ -2,7 +2,7 @@
 title: Установка/Перенос 0.59
 description: Установка и настройка Abills 0.59 под NGiNX на Debian
 published: false
-date: 2022-02-02T16:55:32.287Z
+date: 2022-02-02T16:58:39.632Z
 tags: abills, abills 0.59, debian, nginx
 editor: markdown
 dateCreated: 2022-02-02T16:35:41.603Z
@@ -70,3 +70,10 @@ crontab /etc/crontab
 ## Настройка Freeradius
 
 ## Настройка NGiNX
+
+## IPTables
+Если **iptables** настроен на запрет всех подключений, то нужно добавить пару правил:
+```bash
+iptables -t raw -A PREROUTING -i IF_NAME -s IP -p udp --dport 1812 -j ACCEPT
+iptables -t raw -A PREROUTING -i IF_NAME -s IP -p udp --dport 1813 -j ACCEPT
+```
