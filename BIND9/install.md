@@ -2,7 +2,7 @@
 title: Установка
 description: Установка и настройка BIND9 на Debian
 published: false
-date: 2022-02-02T19:40:35.912Z
+date: 2022-02-02T19:46:40.631Z
 tags: bind9, debian, dns, linux
 editor: markdown
 dateCreated: 2022-02-02T19:36:37.711Z
@@ -19,7 +19,8 @@ apt install bind9 dnsutils -y
 ```bash
 mkdir /etc/bind/zones /var/log/named
 touch /var/log/named/named.log
-chown bind. /etc/bind/zones
+cp /etc/bind/db.local /etc/bind/zones/ns1.lab.local
+chown -R bind. /etc/bind/zones
 chown -R bind. /var/log/named
 ```
 ### Конфигурируем
@@ -113,4 +114,38 @@ view "public" {
         file "/etc/bind/zones/ns1.lab.local";
     };
 };
+```
+## Пример файла зоны
+Пример файла **ns1.lab.local**:
+```bash
+nano /etc/bind/zones/ns1.lab.local
+```
+```bash
+$TTL   86400 #Время обновления зоны в секундах (Сутки)
+@       IN      SOA     ns1.lab.local. root.lab.local. (
+                              2         ; Serial
+                          43200         ; Refresh
+                          86400         ; Retry
+                        2419200         ; Expire
+                         604800 )       ; Negative Cache TTL
+;
+@               IN      NS      ns1.lab.local.
+
+; Внешние IP-адреса
+@               IN      A       X.X.X.X
+www             IN      A       X.X.X.X
+ns1             IN      A       X.X.X.X
+```
+### Применение настроек к Bind9
+```bash
+/etc/init.d/bind9 reload
+```
+### Настройка resolv.conf для использования локального DNS
+```bash
+nano /etc/resolv.conf
+```
+```bash
+nameserver 127.0.0.1
+domain lab.local
+search lab.local
 ```
