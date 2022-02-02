@@ -2,7 +2,7 @@
 title: Nginx + Php + MariaDB + PhpMyAdmin + Perl
 description: Установка и настройка NGiNX + PHP + MariaDB + PhpMyAdmin + Perl на Debian
 published: false
-date: 2022-02-02T14:59:19.732Z
+date: 2022-02-02T15:13:49.926Z
 tags: debian, linux, mariadb, mysql, nginx, perl, php, phpmyadmin
 editor: markdown
 dateCreated: 2022-02-02T14:49:07.617Z
@@ -14,7 +14,7 @@ dateCreated: 2022-02-02T14:49:07.617Z
 ```bash
 apt install nginx php-{fpm,common,mysql,gd,cli,curl,mbstring,cgi} -y
 ```
-#### Настройка
+#### Настройка NGiNX
 В файле **nginx.conf** отключаем отображение версии и разрешаем длинные домены:
 ```bash
 nano /etc/nginx/nginx.conf
@@ -46,3 +46,13 @@ server {
   return 444;
 }
 ```
+#### Настройка PHP
+Для запрета заливки посторонних скриптов и их выполения на свервер, отредактируем файл **/etc/php/x.x/fpm/php.ini**:
+```bash
+nano /etc/php/x.x/fpm/php.ini
+```
+Найдем дерективу **;cgi.fix_pathinfo=1** и приведем к виду:
+```php
+cgi.fix_pathinfo=0
+```
+Сохраняем, закрываем (<kbd>F2</kbd>, <kbd>CTRL+X</kbd>).
