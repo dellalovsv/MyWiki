@@ -2,7 +2,7 @@
 title: Установка/Перенос 0.59
 description: Установка и настройка Abills 0.59 под NGiNX на Debian
 published: false
-date: 2022-02-02T17:15:31.346Z
+date: 2022-02-02T17:30:11.873Z
 tags: abills, abills 0.59, debian, nginx
 editor: markdown
 dateCreated: 2022-02-02T16:35:41.603Z
@@ -68,7 +68,7 @@ nano /etc/cronta
 crontab /etc/crontab
 ```
 ## [Настройка MySQL (MariaDB)](https://wiki.delovoyadmin.net/ru/NGiNX/install_debian#%D1%83%D1%81%D1%82%D0%B0%D0%BD%D0%BE%D0%B2%D0%BA%D0%B0-mariadb-phpmyadmin)
-
+Статья по настройке **MySQL** по ссылке выше.
 ## Настройка Freeradius
 
 ## Настройка NGiNX
