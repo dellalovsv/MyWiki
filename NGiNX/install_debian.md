@@ -2,7 +2,7 @@
 title: Nginx + Php + MariaDB + PhpMyAdmin + Perl
 description: Установка и настройка NGiNX + PHP + MariaDB + PhpMyAdmin + Perl на Debian
 published: false
-date: 2022-02-02T15:52:46.930Z
+date: 2022-02-02T16:02:20.047Z
 tags: debian, linux, mariadb, mysql, nginx, perl, php, phpmyadmin
 editor: markdown
 dateCreated: 2022-02-02T14:49:07.617Z
@@ -159,3 +159,175 @@ nginx: configuration file /etc/nginx/nginx.conf test is successful
 nginx -s reload
 ```
 ## Подключение Perl к NGiNX
+### Установка
+```bash
+apt install libfcgi-perl -y
+```
+### Настройка
+Нужно будет создать и заполнить несколько файлов.
+Создаем **fastcgi-wrapper.pl** и заполняем его:
+```bash
+nano /usr/bin/fastcgi-wrapper.pl
+```
+```perl
+#!/usr/bin/perl
+
+use FCGI;
+use Socket;
+use POSIX qw(setsid);
+
+require 'syscall.ph';
+
+&daemonize;
+
+#this keeps the program alive or something after exec'ing perl scripts
+END() { } BEGIN() { }
+*CORE::GLOBAL::exit = sub { die "fakeexit\nrc=".shift()."\n"; }; 
+eval q{exit}; 
+if ($@) { 
+	exit unless $@ =~ /^fakeexit/; 
+};
+
+&main;
+
+sub daemonize() {
+    chdir '/'                 or die "Can't chdir to /: $!";
+    defined(my $pid = fork)   or die "Can't fork: $!";
+    exit if $pid;
+    setsid                    or die "Can't start a new session: $!";
+    umask 0;
+}
+
+sub main {
+        $socket = FCGI::OpenSocket( "127.0.0.1:8999", 10 ); #use IP sockets
+        $request = FCGI::Request( \*STDIN, \*STDOUT, \*STDERR, \%req_params, $socket );
+        if ($request) { request_loop()};
+            FCGI::CloseSocket( $socket );
+}
+
+sub request_loop {
+        while( $request->Accept() >= 0 ) {
+            
+           #processing any STDIN input from WebServer (for CGI-POST actions)
+           $stdin_passthrough ='';
+           $req_len = 0 + $req_params{'CONTENT_LENGTH'};
+           if (($req_params{'REQUEST_METHOD'} eq 'POST') && ($req_len != 0) ){ 
+                my $bytes_read = 0;
+                while ($bytes_read < $req_len) {
+                        my $data = '';
+                        my $bytes = read(STDIN, $data, ($req_len - $bytes_read));
+                        last if ($bytes == 0 || !defined($bytes));
+                        $stdin_passthrough .= $data;
+                        $bytes_read += $bytes;
+                }
+            }
+
+            #running the cgi app
+            if ( (-x $req_params{SCRIPT_FILENAME}) &&  #can I execute this?
+                 (-s $req_params{SCRIPT_FILENAME}) &&  #Is this file empty?
+                 (-r $req_params{SCRIPT_FILENAME})     #can I read this file?
+            ){
+		pipe(CHILD_RD, PARENT_WR);
+		my $pid = open(KID_TO_READ, "-|");
+		unless(defined($pid)) {
+			print("Content-type: text/plain\r\n\r\n");
+                        print "Error: CGI app returned no output - ";
+                        print "Executing $req_params{SCRIPT_FILENAME} failed !\n";
+			next;
+		}
+		if ($pid > 0) {
+			close(CHILD_RD);
+			print PARENT_WR $stdin_passthrough;
+			close(PARENT_WR);
+
+			while(my $s = <KID_TO_READ>) { print $s; }
+			close KID_TO_READ;
+			waitpid($pid, 0);
+		} else {
+	                foreach $key ( keys %req_params){
+        	           $ENV{$key} = $req_params{$key};
+                	}
+        	        # cd to the script's local directory
+	                if ($req_params{SCRIPT_FILENAME} =~ /^(.*)\/[^\/]+$/) {
+                        	chdir $1;
+                	}
+
+			close(PARENT_WR);
+			close(STDIN);
+			#fcntl(CHILD_RD, F_DUPFD, 0);
+			syscall(&SYS_dup2, fileno(CHILD_RD), 0);
+			#open(STDIN, "<&CHILD_RD");
+			exec($req_params{SCRIPT_FILENAME});
+			die("exec failed");
+		}
+            } 
+            else {
+                print("Content-type: text/plain\r\n\r\n");
+                print "Error: No such CGI app - $req_params{SCRIPT_FILENAME} may not ";
+                print "exist or is not executable by this process.\n";
+            }
+
+        }
+}
+```
+Сохраняем, закрываем (<kbd>F2</kbd>, <kbd>CTRL+X</kbd>).
+
+---
+
+Создаем еще один файл **perl-fcgi** и заполняем его:
+```bash
+nano /etc/init.d/perl-fcgi
+```
+```bash
+#!/bin/bash
+### BEGIN INIT INFO
+# Provides:          perl-fcgi
+# Required-Start:    networking
+# Required-Stop:     networking
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Start the Perl FastCGI daemon.
+### END INIT INFO 
+PERL_SCRIPT=/usr/bin/fastcgi-wrapper.pl
+FASTCGI_USER=www-data
+RETVAL=0
+case "$1" in
+    start)
+      su - $FASTCGI_USER -c $PERL_SCRIPT
+      RETVAL=$?
+  ;;
+    stop)
+      killall -9 fastcgi-wrapper.pl
+      RETVAL=$?
+  ;;
+    restart)
+      killall -9 fastcgi-wrapper.pl
+      su - $FASTCGI_USER -c $PERL_SCRIPT
+      RETVAL=$?
+  ;;
+    *)
+      echo "Usage: perl-fcgi {start|stop|restart}"
+      exit 1
+  ;;
+esac      
+exit $RETVAL
+```
+Сохраняем, закрываем (<kbd>F2</kbd>, <kbd>CTRL+X</kbd>).
+
+---
+
+Для работы данных скриптов нужно установить **sudo** и внести изминения в файл **perl-fcgi**:
+```bash
+apt install sudo -y
+sed -i -e 's/su\ -/sudo\ -u/g' -e '/sudo/s/-c\ //g' /etc/init.d/perl-fcgi
+```
+Далее даем права на запуск данных скриптов:
+```bash
+chmod +x /usr/bin/fastcgi-wrapper.pl
+chmod +x /etc/init.d/perl-fcgi
+```
+Добавляем **perl-fcgi** в автозапуск и запускаем его:
+```bash
+systemctl enable perl-fcgi
+/etc/init.d/perl-fcgi start
+```
