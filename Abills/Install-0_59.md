@@ -2,7 +2,7 @@
 title: Установка/Перенос 0.59
 description: Установка и настройка Abills 0.59 под NGiNX на Debian
 published: false
-date: 2022-02-02T16:50:28.173Z
+date: 2022-02-02T16:55:32.287Z
 tags: abills, abills 0.59, debian, nginx
 editor: markdown
 dateCreated: 2022-02-02T16:35:41.603Z
@@ -16,6 +16,9 @@ apt install libperl-dev  gcc make
 ```
 ## Настройка Abills
 В файле **config.pl** изменяем параметры для подключения к БД:
+```bash
+nano /usr/abills/libexec/config.pl
+```
 ```perl
 $conf{dbhost}='localhost';
 $conf{dbname}='abills'; 
@@ -35,6 +38,19 @@ chown -Rf www-data /usr/abills/Abills/templates
 chown -Rf www-data /usr/abills/backup
 chmod 755 /usr/abills/cgi-bin/admin/index.cgi
 chmod 755 /usr/abills/cgi-bin/index.cgi
+```
+### Создание symlinks для gzip и mysqldump
+```bash
+ln -s /bin/gzip /usr/bin/gzip
+ln -s /usr/bin/mysqldump /usr/local/bin/mysqldump
+```
+### После добавления NAS-сервера в биллинг
+Чтобы работал гостевой пул, нужно изменить дерективу **$conf{ACCEL_IPOE_GUEST_POOL}** в файле **config.pl**
+```bash
+nano /usr/abills/libexec/config.pl
+```
+```perl
+$conf{ACCEL_IPOE_GUEST_POOL}=№ наса в биллинге,№ гостевого пула в биллинге
 ```
 ### Cron
 Открываем файл **crontab**:
