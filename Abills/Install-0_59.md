@@ -2,7 +2,7 @@
 title: Установка/Перенос 0.59
 description: Установка и настройка Abills 0.59 под NGiNX на Debian
 published: false
-date: 2022-02-02T16:46:13.155Z
+date: 2022-02-02T16:50:28.173Z
 tags: abills, abills 0.59, debian, nginx
 editor: markdown
 dateCreated: 2022-02-02T16:35:41.603Z
@@ -25,6 +25,31 @@ $conf{ADMIN_MAIL}='info@your.domain';
 $conf{USERS_MAIL_DOMAIN}="your.domain";
 # используется для шифрования паролей администраторов и пользователей.
 $conf{secretkey}="test12345678901234567890";
+```
+### Создание директорий и назначение прав файлам
+```bash
+mkdir /usr/abills/var/ /usr/abills/var/log /usr/abills/backup
+touch /usr/abills/var/log/abills.log
+chown -Rf www-data /usr/abills/cgi-bin
+chown -Rf www-data /usr/abills/Abills/templates
+chown -Rf www-data /usr/abills/backup
+chmod 755 /usr/abills/cgi-bin/admin/index.cgi
+chmod 755 /usr/abills/cgi-bin/index.cgi
+```
+### Cron
+Открываем файл **crontab**:
+```bash
+nano /etc/cronta
+```
+Дописывам:
+```bash
+*/5 * * * *	root   /usr/abills/libexec/billd -all
+1 0 * * *		root    /usr/abills/libexec/periodic daily
+1 1 * * *		root    /usr/abills/libexec/periodic monthly
+```
+Применяем настройки:
+```bash
+crontab /etc/crontab
 ```
 ## Настройка Freeradius
 
