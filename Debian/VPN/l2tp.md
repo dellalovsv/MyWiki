@@ -2,7 +2,7 @@
 title: L2TP+IPSec
 description: Настройка L2TP+IPSec сервера на Debian
 published: true
-date: 2022-02-02T19:29:28.297Z
+date: 2022-02-03T07:22:14.710Z
 tags: debian, ipsec, l2tp, vpn
 editor: markdown
 dateCreated: 2022-02-02T18:56:51.160Z
@@ -28,7 +28,7 @@ apt install xl2tpd -y
 Начинаем собирать:
 ```bash
 tar -xvzf openswan-*.tar.gz
-cd openswan-2*
+cd Openswan-2*
 make programs
 make install
 ```
