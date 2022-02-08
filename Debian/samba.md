@@ -1,8 +1,8 @@
 ---
 title: Samba
 description: Установка и настройка Samba на Debian
-published: false
-date: 2022-02-08T22:59:43.573Z
+published: true
+date: 2022-02-08T23:11:52.519Z
 tags: debian, samba
 editor: markdown
 dateCreated: 2022-02-08T21:24:36.713Z
