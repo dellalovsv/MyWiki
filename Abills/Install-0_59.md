@@ -2,7 +2,7 @@
 title: Установка/Перенос 0.59
 description: Установка и настройка Abills 0.59 под NGiNX на Debian
 published: true
-date: 2022-02-02T18:00:04.994Z
+date: 2022-02-22T14:38:05.098Z
 tags: abills, abills 0.59, debian, nginx
 editor: markdown
 dateCreated: 2022-02-02T16:35:41.603Z
@@ -139,6 +139,7 @@ client IP-ADDRESS {
 nano /etc/nginx/sites-available/clients.abills
 ```
 ```nginx
+server {
     listen 80;
     server_name client.billing.net;
 
@@ -166,6 +167,7 @@ nano /etc/nginx/sites-available/clients.abills
 nano /etc/nginx/sites-available/admins.abills
 ```
 ```nginx
+server {
     listen 80;
     server_name admin.billing.net;
 
