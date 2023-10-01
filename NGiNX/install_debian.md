@@ -337,6 +337,7 @@ location ~ \.cgi$ { #(В оригинале location ~ \.pl$ {)
   try_files $uri =404;
 	gzip off;
 	fastcgi_pass  127.0.0.1:8999;
+	fastcgi_read_timeout 300; # Это для Abills. Чтобы при генирации около 1000 карт, резултат все таки отображался.
 	fastcgi_index index.cgi; #(В оригинале fastcgi_index index.pl;)
 	fastcgi_param  SCRIPT_FILENAME  $document_root$fastcgi_script_name;
 	include fastcgi_params;
