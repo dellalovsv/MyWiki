@@ -58,7 +58,7 @@ cgi.fix_pathinfo=0
 ##### Подключаем PHP к NGiNX
 Чтобы не писать одно и то же в каждом хост файле где нужно использовать **php**, заведем отдельный файл в директории **nginx**:
 ```bash
-touch /etc/nginx/php-cgi.conf
+nano /etc/nginx/php-cgi.conf
 ```
 **Через сокет**
 Это пишем в ранее созданый файл **php-cgi.conf**
