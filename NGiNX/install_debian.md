@@ -332,9 +332,12 @@ systemctl enable perl-fcgi
 /etc/init.d/perl-fcgi start
 ```
 Теперь нужно добавить **location** в хост файл или создать отдельный файл и подключать его дерективой **include**:
+```bash
+nano /etc/nginx/perl-cgi.conf
+```
 ```nginx
 location ~ \.cgi$ { #(В оригинале location ~ \.pl$ {)
-  try_files $uri =404;
+	try_files $uri =404;
 	gzip off;
 	fastcgi_pass  127.0.0.1:8999;
 	fastcgi_read_timeout 300; # Это для Abills. Чтобы при генирации около 1000 карт, резултат все таки отображался.
